@@ -12,8 +12,8 @@
 
 .LoginAuth button.switch {
     width: 100%;
-    color: white;
-    background-color: #D70F64;
+    color: olive;
+    background-color: rgb(193, 224, 138);
     padding: 5px 0 5px 0;
     margin-bottom: 10px;
 }

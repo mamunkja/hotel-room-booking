@@ -1,12 +1,13 @@
 import axios from 'axios';
 import * as actionTypes from './actionTypes';
 
-export const authSuccess = (token, userId) => {
+export const authSuccess = (token, userId, email) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
         payload: {
             token: token,
-            userId: userId
+            userId: userId,
+            email: email,
         }
     }
 }
@@ -31,16 +32,17 @@ export const auth = (email, password, mode) => dispatch => {
     } else {
         authUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=";
     }
-    const API_KEY = "AIzaSyBMXmD-yIB_NV2EWq5jxn01qYOr6CqeEow";
+    const API_KEY = "AIzaSyAog9JA6BkAos2OgP0FhjugwYBqknT4fxg";
     axios.post(authUrl + API_KEY, authData)
         .then(response => {
             if (response.status === 200) {
-                dispatch(authLoading(false));
+
                 localStorage.setItem('token', response.data.idToken);
                 localStorage.setItem('userId', response.data.localId);
+                localStorage.setItem('email', authData.email);
                 const expirationTime = new Date(new Date().getTime() + response.data.expiresIn * 1000);
-                localStorage.setItem('expirationTime', expirationTime);
-                dispatch(authSuccess(response.data.idToken, response.data.localId))
+                localStorage.setItem('expirationTime', expirationTime); dispatch(authLoading(false));
+                dispatch(authSuccess(response.data.idToken, response.data.localId, authData.email));
             }
         })
         .catch(error => {
@@ -59,7 +61,8 @@ export const authCheck = () => dispatch => {
             dispatch(logout);
         } else {
             const userId = localStorage.getItem('userId');
-            dispatch(authSuccess(token, userId));
+            const email = localStorage.getItem('email');
+            dispatch(authSuccess(token, userId, email));
         }
     }
 }
@@ -68,6 +71,7 @@ export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('expirationTime');
+    localStorage.removeItem('email');
     return {
         type: actionTypes.AUTH_LOGOUT
     }

@@ -1,0 +1,1 @@
+export const baseUrl = 'https://hotel-room-booking-e3fe0-default-rtdb.asia-southeast1.firebasedatabase.app/';

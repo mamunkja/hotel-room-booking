@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Auth from "./Auth/Auth";
-import BurgerBuilder from "./BurgerBuilder/BurgerBuilder";
 import Header from "./Header/Header";
-import Checkout from "./Orders/Checkout/Checkout";
-import Orders from "./Orders/Orders";
+import Bookings from "./Bookings/Bookings";
 import { connect } from "react-redux";
 import { authCheck } from "../redux/authActionCreators";
 import Logout from "./Auth/Logout";
+import Gallery from "./RoomBooking/Gallery";
+import Footer from "./Footer/Footer";
 
 const mapStateToProps = state => {
     return {
@@ -17,11 +17,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        authCheck: () => dispatch(authCheck())
+        authCheck: () => dispatch(authCheck()),
     }
 }
 
 class Main extends Component {
+    constructor(props) {
+        super(props);
+    }
     componentDidMount() {
         this.props.authCheck();
     }
@@ -30,14 +33,14 @@ class Main extends Component {
         let routes = null;
         if (this.props.token === null) {
             routes = (<Routes>
+                <Route exact="true" path="/" element={<Gallery />} />
                 <Route exact="true" path="/login" element={<Auth />} />
                 <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>);
         } else {
             routes = (<Routes>
-                <Route exact="true" path="/orders" element={<Orders />} />
-                <Route exact="true" path="/checkout" element={<Checkout />} />
-                <Route exact="true" path="/" element={<BurgerBuilder />} />
+                <Route exact="true" path="/bookings" element={<Bookings />} />
+                <Route exact="true" path="/" element={<Gallery />} />
                 <Route exact="true" path="/logout" element={<Logout />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>);
@@ -48,6 +51,7 @@ class Main extends Component {
                 <div className="container">
                     {routes}
                 </div>
+                <Footer />
 
             </div>
         )

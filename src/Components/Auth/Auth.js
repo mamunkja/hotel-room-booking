@@ -73,8 +73,8 @@ class Auth extends Component {
                     //validate password
                     if (!values.password) {
                         errors.password = 'Required';
-                    } else if (values.password.length < 4) {
-                        errors.password = 'Password Must be 4 digits long!';
+                    } else if (values.password.length < 6) {
+                        errors.password = 'Password Must be 6 digits long!';
                     }
 
                     //validate confirm password
@@ -105,7 +105,7 @@ class Auth extends Component {
                             <span>{errors.password}</span>
                             <br />
                             {this.state.mode === "Sign Up" ? (<div>
-                                <input name="confirmPassword" placeholder="Enter confirm your password"
+                                <input name="confirmPassword" placeholder="Confirm your password"
                                     className="form-control" value={values.confirmPassword}
                                     onChange={handleChange} />
                                 <span>{errors.confirmPassword}</span>

@@ -22,6 +22,6 @@
 }
 
 .active {
-    text-shadow: 1px 1px green;
-    color: wheat;
+    text-shadow: 1px 1px black;
+    color: olive;
 }

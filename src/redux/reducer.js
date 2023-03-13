@@ -1,105 +1,83 @@
 import * as actionTypes from './actionTypes';
 
-const INGREDIENT_PRICE = {
-    salad: 20,
-    cheese: 40,
-    meat: 90,
-    FIXED: 80
-}
-
 const INITIAL_STATE = {
-    ingredients: [
-        { type: "salad", amount: 0 },
-        { type: "cheese", amount: 0 },
-        { type: "meat", amount: 0 }
-    ],
-    orders: [],
-    ordersLoading: true,
-    orderErr: false,
-    totalPrice: INGREDIENT_PRICE.FIXED,
-    purchasable: false,
+    bookings: [],
+    bookingsLoading: true,
+    bookingsMsg: null,
+    bookingSuccess: false,
+    bookingErr: false,
     token: null,
+    email: null,
     userId: null,
     authLoading: false,
-    authFailedMsg: null
+    authFailedMsg: null,
+    categoryLoading: null,
+    categoryErr: null
 }
 
 export const reducer = (state = INITIAL_STATE, action) => {
-    const ingredient = [...state.ingredients];
     switch (action.type) {
-        case actionTypes.ADD_INGREDIENT:
-            for (let item of ingredient) {
-                if (item.type === action.payload) {
-                    item.amount++;
-                }
-            }
+        case actionTypes.CATEGORIES_LOADING:
             return {
                 ...state,
-                ingredients: ingredient,
-                totalPrice: state.totalPrice + INGREDIENT_PRICE[action.payload]
+                categoryLoading: true,
+                categoryErr: null,
+                categories: []
             }
-        case actionTypes.REMOVE_INGREDIENT:
-            let newPrice;
-
-            for (let item of ingredient) {
-                if (item.type === action.payload) {
-                    if (item.amount > 0) {
-                        item.amount--;
-                        newPrice = state.totalPrice - INGREDIENT_PRICE[action.payload];
-                        break;
-                    } else {
-                        newPrice = state.totalPrice;
-                    }
-                }
-            }
+        case actionTypes.LOAD_CATEGORIES:
             return {
                 ...state,
-                ingredients: ingredient,
-                totalPrice: newPrice
+                categoryLoading: false,
+                categoryErr: null,
+                categories: action.payload
             }
-        case actionTypes.UPDATE_PURCHASABLE:
-            const sum = ingredient.reduce((sum, element) => {
-                return sum + element.amount;
-            }, 0);
+        case actionTypes.CATEGORIES_FAILED:
             return {
                 ...state,
-                purchasable: sum > 0
+                categoryLoading: false,
+                categoryErr: action.payload,
+                categories: []
             }
-        case actionTypes.RESET_INGREDIENTS:
+        case actionTypes.BOOK_ROOM:
             return {
                 ...state,
-                ingredients: [
-                    { type: "salad", amount: 0 },
-                    { type: "cheese", amount: 0 },
-                    { type: "meat", amount: 0 }
-                ],
-                totalPrice: INGREDIENT_PRICE.FIXED,
-                purchasable: false,
+                bookingErr: false,
+                bookingSuccess: true,
+                bookingsMsg: "You have booked the room successfully. Please see in 'bookings' menu!",
             }
-        case actionTypes.LOAD_ORDERS:
-            let orders = [];
+        case actionTypes.LOADING_BOOKINGS:
+            return {
+                ...state,
+                bookingsLoading: true,
+                bookings: []
+            }
+        case actionTypes.LOAD_BOOKINGS:
+            const bookings = [];
             for (let key in action.payload) {
-                orders.push({
-                    ...action.payload[key],
-                    id: key
-                });
+                bookings.push(action.payload[key]);
             }
             return {
                 ...state,
-                orders: orders,
-                ordersLoading: false
+                bookings: bookings,
+                bookingsLoading: false,
+                bookingErr: false,
+                bookingSuccess: false,
             }
-        case actionTypes.ORDER_LOAD_FAILED:
+        case actionTypes.BOOKING_LOAD_FAILED:
             return {
                 ...state,
-                orderErr: true,
-                ordersLoading: false,
+                bookingErr: true,
+                bookingsLoading: false,
+                bookingsMsg: action.payload,
+                bookingSuccess: false,
             }
         case actionTypes.AUTH_SUCCESS:
             return {
                 ...state,
                 token: action.payload.token,
                 userId: action.payload.userId,
+                email: action.payload.email,
+                authFailedMsg: null,
             }
         case actionTypes.AUTH_LOGOUT:
             return {
@@ -111,7 +89,8 @@ export const reducer = (state = INITIAL_STATE, action) => {
         case actionTypes.AUTH_LOADING:
             return {
                 ...state,
-                authLoading: action.payload
+                authLoading: action.payload,
+                bookingErr: false,
             }
         case actionTypes.AUTH_FAILED:
             return {
