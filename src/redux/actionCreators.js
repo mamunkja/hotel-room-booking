@@ -12,7 +12,6 @@ export const bookRoom = (room, token, userId) => dispatch => {
         orderTime: Date(),
         userId: userId
     };
-    //const queryParams = '&bookingBy="userId"&equalTo="' + userId + '"';
     axios.post('https://hotel-room-booking-e3fe0-default-rtdb.asia-southeast1.firebasedatabase.app/bookings.json?auth=' + token, roomInfo)
         .then(response => dispatch({
             type: actionTypes.BOOK_ROOM,
